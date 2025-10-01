@@ -6,20 +6,37 @@ import { ProfileIcon } from './icons/ProfileIcon';
 import { ServerIcon } from './icons/ServerIcon';
 import AddClientModal from './AddClientModal';
 import ProfileModal from './ProfileModal';
+import ServerWindow from './ServerWindow';
 
 interface MainPageProps {
   onLogout: () => void;
+}
+
+// Define Server type
+interface Server {
+  id: number;
+  name: string;
+  status: 'online' | 'offline';
 }
 
 const MainPage: React.FC<MainPageProps> = ({ onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [activeServer, setActiveServer] = useState<Server | null>(null);
 
   // Mock data for connected servers
-  const [connectedServers] = useState([
+  const [connectedServers] = useState<Server[]>([
     { id: 1, name: 'KALI-MCP-PROD', status: 'online' }
   ]);
+
+  const handleServerClick = (server: Server) => {
+    setActiveServer(server);
+  };
+
+  const handleCloseServerWindow = () => {
+    setActiveServer(null);
+  };
 
   return (
     <div className="flex h-screen bg-black text-gray-300">
@@ -78,11 +95,12 @@ const MainPage: React.FC<MainPageProps> = ({ onLogout }) => {
          </div>
       </div>
       
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-40">
         <div className="relative flex flex-col items-center gap-3">
           {connectedServers.map(server => (
             <div key={server.id} className="group relative flex items-center">
                <button 
+                  onClick={() => handleServerClick(server)}
                   className="w-12 h-12 rounded-full bg-gray-900/80 border-2 border-[#63bb33]/50 flex items-center justify-center text-[#63bb33] hover:border-[#63bb33] hover:shadow-lg hover:shadow-[#63bb33]/20 transition-all duration-300 relative"
                   aria-label={`Server: ${server.name}`}
                 >
@@ -108,6 +126,7 @@ const MainPage: React.FC<MainPageProps> = ({ onLogout }) => {
       
       <AddClientModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
+      <ServerWindow server={activeServer} isOpen={!!activeServer} onClose={handleCloseServerWindow} />
     </div>
   );
 };
