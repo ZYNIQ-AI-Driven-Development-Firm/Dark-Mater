@@ -1,0 +1,91 @@
+import React, { useState } from 'react';
+import { MenuIcon } from './icons/MenuIcon';
+import { PlusIcon } from './icons/PlusIcon';
+import { LogoutIcon } from './icons/LogoutIcon';
+import { ProfileIcon } from './icons/ProfileIcon';
+import AddClientModal from './AddClientModal';
+import ProfileModal from './ProfileModal';
+
+interface MainPageProps {
+  onLogout: () => void;
+}
+
+const MainPage: React.FC<MainPageProps> = ({ onLogout }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  return (
+    <div className="flex h-screen bg-black text-gray-300">
+      <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-10">
+        <div className="relative w-96">
+            <div className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-[#63bb33]/50"></div>
+            <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-[#63bb33]/50"></div>
+            <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-[#63bb33]/50"></div>
+            <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-[#63bb33]/50"></div>
+            <img 
+              src="https://raw.githubusercontent.com/khalilpreview/M7yapp9sColl3c1oncdn/refs/heads/main/dark_mater_white_inline_logo.png" 
+              alt="Dark Matter Logo" 
+              className="w-full h-auto p-4 mx-auto logo-fade-pulse" 
+            />
+        </div>
+      </main>
+
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-6 left-6 z-50">
+         <div className="relative flex flex-col items-center gap-3">
+            {isMenuOpen && (
+              <>
+                <div className="group relative flex items-center">
+                  <button 
+                    onClick={() => setIsProfileModalOpen(true)}
+                    className="w-12 h-12 rounded-full bg-gray-900/80 border-2 border-[#63bb33]/50 flex items-center justify-center text-[#63bb33] hover:border-[#63bb33] hover:shadow-lg hover:shadow-[#63bb33]/20 transition-all duration-300"
+                    aria-label="Profile Settings"
+                  >
+                    <ProfileIcon className="w-6 h-6" />
+                  </button>
+                  <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-sm bg-gray-900/90 px-3 py-1 text-sm text-[#63bb33] opacity-0 transition-opacity group-hover:opacity-100">
+                    [PROFILE]
+                  </span>
+                </div>
+                <div className="group relative flex items-center">
+                  <button 
+                    onClick={onLogout}
+                    className="w-12 h-12 rounded-full bg-gray-900/80 border-2 border-[#63bb33]/50 flex items-center justify-center text-[#63bb33] hover:border-[#63bb33] hover:shadow-lg hover:shadow-[#63bb33]/20 transition-all duration-300"
+                    aria-label="Logout"
+                  >
+                    <LogoutIcon className="w-6 h-6" />
+                  </button>
+                  <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-sm bg-gray-900/90 px-3 py-1 text-sm text-[#63bb33] opacity-0 transition-opacity group-hover:opacity-100">
+                    [LOGOUT]
+                  </span>
+                </div>
+              </>
+            )}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="w-14 h-14 rounded-full bg-gray-900/80 border-2 border-[#63bb33]/50 flex items-center justify-center text-[#63bb33] hover:border-[#63bb33] hover:shadow-lg hover:shadow-[#63bb33]/20 transition-all duration-300"
+              aria-label="Toggle menu"
+            >
+              <MenuIcon className="w-7 h-7" />
+            </button>
+         </div>
+      </div>
+      
+      <div className="fixed bottom-6 right-6 z-50">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="w-14 h-14 rounded-full bg-gray-900/80 border-2 border-[#63bb33]/50 flex items-center justify-center text-[#63bb33] hover:border-[#63bb33] hover:shadow-lg hover:shadow-[#63bb33]/20 transition-all duration-300"
+          aria-label="Connect to new MCP Server"
+        >
+          <PlusIcon className="w-7 h-7" />
+        </button>
+      </div>
+      
+      <AddClientModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
+    </div>
+  );
+};
+
+export default MainPage;

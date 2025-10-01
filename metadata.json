@@ -1,0 +1,5 @@
+{
+  "name": "Model Context Protocol Client",
+  "description": "A client application for the Model Context Protocol, providing a secure login and an interface to connect models with databases, APIs, and other tools.",
+  "requestFramePermissions": []
+}
