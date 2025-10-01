@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react-dom": "^19.1.1",
-    "react": "^19.1.1",
-    "styled-components": "^6.1.12"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "styled-components": "6.1.12"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

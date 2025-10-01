@@ -20,42 +20,44 @@ const LoaderPage = () => {
 
   return (
     <StyledWrapper>
-      <div className="gearbox">
-        <div className="overlay" />
-        <div className="gear one">
-          <div className="gear-inner">
-            <div className="bar" />
-            <div className="bar" />
-            <div className="bar" />
+      <div className="loader-container">
+        <div className="gearbox">
+          <div className="overlay" />
+          <div className="gear one">
+            <div className="gear-inner">
+              <div className="bar" />
+              <div className="bar" />
+              <div className="bar" />
+            </div>
           </div>
-        </div>
-        <div className="gear two">
-          <div className="gear-inner">
-            <div className="bar" />
-            <div className="bar" />
-            <div className="bar" />
+          <div className="gear two">
+            <div className="gear-inner">
+              <div className="bar" />
+              <div className="bar" />
+              <div className="bar" />
+            </div>
           </div>
-        </div>
-        <div className="gear three">
-          <div className="gear-inner">
-            <div className="bar" />
-            <div className="bar" />
-            <div className="bar" />
+          <div className="gear three">
+            <div className="gear-inner">
+              <div className="bar" />
+              <div className="bar" />
+              <div className="bar" />
+            </div>
           </div>
-        </div>
-        <div className="gear four large">
-          <div className="gear-inner">
-            <div className="bar" />
-            <div className="bar" />
-            <div className="bar" />
-            <div className="bar" />
-            <div className="bar" />
-            <div className="bar" />
+          <div className="gear four large">
+            <div className="gear-inner">
+              <div className="bar" />
+              <div className="bar" />
+              <div className="bar" />
+              <div className="bar" />
+              <div className="bar" />
+              <div className="bar" />
+            </div>
           </div>
         </div>
       </div>
       <div className="loading-text">
-        Loading... {progress}%
+        DARK MATER | Loading... {progress}%
       </div>
     </StyledWrapper>
   );
@@ -69,32 +71,28 @@ const StyledWrapper = styled.div`
   min-height: 100vh;
   background-color: #000;
 
+  .loader-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .loading-text {
     margin-top: 2rem;
     color: #63bb33;
-    font-size: 1.25rem;
-    font-family: 'Courier New', Courier, monospace;
-    text-shadow: 0 0 5px #63bb33, 0 0 10px #63bb33;
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px #63bb33, 0 0 15px #63bb33, 0 0 25px rgba(99, 187, 51, 0.8);
   }
 
   @keyframes clockwise {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 
   @keyframes counter-clockwise {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(-360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
   }
 
   .gearbox {
@@ -106,6 +104,7 @@ const StyledWrapper = styled.div`
     overflow: hidden;
     border-radius: 6px;
     box-shadow: 0px 0px 1px 1px rgba(99, 187, 51, 0.2), 0 0 15px rgba(99, 187, 51, 0.4), inset 0 0 10px rgba(99, 187, 51, 0.2);
+    opacity: 0.5;
   }
 
   .gearbox .overlay {
@@ -118,11 +117,6 @@ const StyledWrapper = styled.div`
     height: 100%;
     z-index: 10;
     box-shadow: inset 0px 0px 20px black;
-    transition: background 0.2s;
-  }
-
-  .gearbox .overlay {
-    background: transparent;
   }
 
   .gear {
@@ -147,25 +141,10 @@ const StyledWrapper = styled.div`
     margin-top: -48px;
   }
 
-  .gear.one {
-    top: 12px;
-    left: 10px;
-  }
-
-  .gear.two {
-    top: 61px;
-    left: 60px;
-  }
-
-  .gear.three {
-    top: 110px;
-    left: 10px;
-  }
-
-  .gear.four {
-    top: 13px;
-    left: 128px;
-  }
+  .gear.one { top: 12px; left: 10px; }
+  .gear.two { top: 61px; left: 60px; }
+  .gear.three { top: 110px; left: 10px; }
+  .gear.four { top: 13px; left: 128px; }
 
   .gear:after {
     content: "";
@@ -195,21 +174,10 @@ const StyledWrapper = styled.div`
     border-radius: 60px;
   }
 
-  .gear.one .gear-inner {
-    animation: counter-clockwise 3s infinite linear;
-  }
-
-  .gear.two .gear-inner {
-    animation: clockwise 3s infinite linear;
-  }
-
-  .gear.three .gear-inner {
-    animation: counter-clockwise 3s infinite linear;
-  }
-
-  .gear.four .gear-inner {
-    animation: counter-clockwise 6s infinite linear;
-  }
+  .gear.one .gear-inner { animation: counter-clockwise 3s infinite linear; }
+  .gear.two .gear-inner { animation: clockwise 3s infinite linear; }
+  .gear.three .gear-inner { animation: counter-clockwise 3s infinite linear; }
+  .gear.four .gear-inner { animation: counter-clockwise 6s infinite linear; }
 
   .gear-inner .bar {
     background: #555;
@@ -230,25 +198,11 @@ const StyledWrapper = styled.div`
     width: 136px;
   }
 
-  .gear-inner .bar:nth-child(2) {
-    transform: rotate(60deg);
-  }
-
-  .gear-inner .bar:nth-child(3) {
-    transform: rotate(120deg);
-  }
-
-  .gear-inner .bar:nth-child(4) {
-    transform: rotate(90deg);
-  }
-
-  .gear-inner .bar:nth-child(5) {
-    transform: rotate(30deg);
-  }
-
-  .gear-inner .bar:nth-child(6) {
-    transform: rotate(150deg);
-  }
+  .gear-inner .bar:nth-child(2) { transform: rotate(60deg); }
+  .gear-inner .bar:nth-child(3) { transform: rotate(120deg); }
+  .gear-inner .bar:nth-child(4) { transform: rotate(90deg); }
+  .gear-inner .bar:nth-child(5) { transform: rotate(30deg); }
+  .gear-inner .bar:nth-child(6) { transform: rotate(150deg); }
 `;
 
 export default LoaderPage;

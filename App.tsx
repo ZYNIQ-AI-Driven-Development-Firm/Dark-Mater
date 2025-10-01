@@ -2,11 +2,20 @@ import React, { useState, useEffect } from 'react';
 import LoginPage from './components/LoginPage';
 import MainPage from './components/MainPage';
 import LoaderPage from './components/LoaderPage';
+import LandingPage from './components/LandingPage';
 
-type AuthState = 'initializing' | 'loggedOut' | 'loading' | 'loggedIn';
+type AuthState = 'initializing' | 'landing' | 'loggedOut' | 'loading' | 'loggedIn';
 
 const App: React.FC = () => {
   const [authState, setAuthState] = useState<AuthState>('initializing');
+
+  const handleEnterApp = () => {
+    setAuthState('loggedOut');
+  };
+
+  const handleGoToLanding = () => {
+    setAuthState('landing');
+  };
 
   const handleLoginSuccess = () => {
     setAuthState('loading');
@@ -19,8 +28,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (authState === 'initializing') {
       const timer = setTimeout(() => {
-        setAuthState('loggedOut');
-      }, 2000); // Initial splash screen for 2 seconds
+        setAuthState('landing');
+      }, 3000); // Initial splash screen for 3 seconds
       return () => clearTimeout(timer);
     }
     if (authState === 'loading') {
@@ -36,11 +45,13 @@ const App: React.FC = () => {
       case 'initializing':
       case 'loading':
         return <LoaderPage />;
+      case 'landing':
+        return <LandingPage onEnter={handleEnterApp} />;
       case 'loggedIn':
         return <MainPage onLogout={handleLogout} />;
       case 'loggedOut':
       default:
-        return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+        return <LoginPage onLoginSuccess={handleLoginSuccess} onGoToLanding={handleGoToLanding} />;
     }
   };
 

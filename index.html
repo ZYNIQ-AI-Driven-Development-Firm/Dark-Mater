@@ -12,10 +12,11 @@
   <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "react/": "https://aistudiocdn.com/react@^19.1.1/",
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "styled-components": "https://aistudiocdn.com/styled-components@^6.1.12"
+    "react": "https://esm.sh/react@18.2.0",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+    "styled-components": "https://esm.sh/styled-components@6.1.12?deps=react@18.2.0"
   }
 }
 </script>
@@ -49,6 +50,31 @@
   }
   .logo-fade-pulse {
     animation: fade-pulse 5s ease-in-out infinite;
+  }
+  .blinking-cursor {
+    border-right: 2px solid #63bb33;
+    animation: blink 1s step-end infinite;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  @keyframes blink {
+    from, to { border-color: transparent }
+    50% { border-color: #63bb33; }
+  }
+
+  .background-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    background-color: #000;
+  }
+  @keyframes grid-line {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
   }
 </style>
 </head>
