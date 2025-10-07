@@ -1,0 +1,112 @@
+# Google Cloud Build configuration for Dark Matter MCP
+steps:
+  # Build Backend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-backend'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/darkmatter-mcp-backend:$BUILD_ID'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/darkmatter-mcp-backend:latest'
+      - '-f'
+      - 'backend/Dockerfile'
+      - '.'
+
+  # Build Frontend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-frontend'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/darkmatter-mcp-frontend:$BUILD_ID'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/darkmatter-mcp-frontend:latest'
+      - '-f'
+      - 'Dockerfile'
+      - '.'
+
+  # Push Backend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-backend'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/darkmatter-mcp-backend:$BUILD_ID'
+    waitFor: ['build-backend']
+
+  # Push Frontend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-frontend'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/darkmatter-mcp-frontend:$BUILD_ID'
+    waitFor: ['build-frontend']
+
+  # Deploy Backend to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy-backend'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'darkmatter-mcp-backend'
+      - '--image=gcr.io/$PROJECT_ID/darkmatter-mcp-backend:$BUILD_ID'
+      - '--region=$_REGION'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--max-instances=10'
+      - '--set-env-vars=ENV=production,LOG_LEVEL=INFO'
+      - '--set-secrets=SECRET_KEY=darkmatter-secret-key:latest,SENDGRID_API_KEY=sendgrid-api-key:latest,DATABASE_URL=database-url:latest,REDIS_URL=redis-url:latest'
+    waitFor: ['push-backend']
+
+  # Deploy Frontend to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy-frontend'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'darkmatter-mcp-frontend'
+      - '--image=gcr.io/$PROJECT_ID/darkmatter-mcp-frontend:$BUILD_ID'
+      - '--region=$_REGION'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--max-instances=5'
+      - '--set-env-vars=NODE_ENV=production,VITE_API_BASE_URL=https://darkmatter-mcp-backend-${_REGION_SUFFIX}.a.run.app,VITE_WS_BASE_URL=wss://darkmatter-mcp-backend-${_REGION_SUFFIX}.a.run.app'
+    waitFor: ['push-frontend', 'deploy-backend']
+
+  # Update latest tags
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/darkmatter-mcp-backend:latest'
+    waitFor: ['deploy-backend']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/darkmatter-mcp-frontend:latest'
+    waitFor: ['deploy-frontend']
+
+# Build configuration
+options:
+  machineType: 'E2_HIGHCPU_8'
+  diskSizeGb: 100
+  logging: CLOUD_LOGGING_ONLY
+
+# Substitutions for deployment variables
+substitutions:
+  _REGION: 'us-central1'
+  _REGION_SUFFIX: 'uc'
+
+# Build timeout
+timeout: '1200s'
+
+# Images to push to registry
+images:
+  - 'gcr.io/$PROJECT_ID/darkmatter-mcp-backend:$BUILD_ID'
+  - 'gcr.io/$PROJECT_ID/darkmatter-mcp-backend:latest'
+  - 'gcr.io/$PROJECT_ID/darkmatter-mcp-frontend:$BUILD_ID'
+  - 'gcr.io/$PROJECT_ID/darkmatter-mcp-frontend:latest'

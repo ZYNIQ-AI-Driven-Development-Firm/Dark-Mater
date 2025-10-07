@@ -1,0 +1,22 @@
+{
+  "name": "@dark-matter/auth",
+  "version": "1.0.0",
+  "description": "Shared authentication utilities for Dark Matter services",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "axios": "^1.6.0",
+    "@types/jsonwebtoken": "^9.0.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  }
+}

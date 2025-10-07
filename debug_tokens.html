@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Token Debug</title>
+</head>
+<body>
+    <h1>Token Debug</h1>
+    <button onclick="checkTokens()">Check Tokens</button>
+    <button onclick="clearTokens()">Clear All Tokens</button>
+    <pre id="output"></pre>
+
+    <script>
+        function checkTokens() {
+            const output = document.getElementById('output');
+            const tokens = {
+                'dark_matter_access_token': localStorage.getItem('dark_matter_access_token'),
+                'access_token': localStorage.getItem('access_token'),
+                'dark_matter_refresh_token': localStorage.getItem('dark_matter_refresh_token'),
+                'refresh_token': localStorage.getItem('refresh_token')
+            };
+            
+            output.textContent = JSON.stringify(tokens, null, 2);
+            
+            // Also check if tokens are the same
+            const darkMatterToken = localStorage.getItem('dark_matter_access_token');
+            const regularToken = localStorage.getItem('access_token');
+            
+            console.log('🔍 Token comparison:');
+            console.log('dark_matter_access_token:', darkMatterToken ? 'EXISTS' : 'MISSING');
+            console.log('access_token:', regularToken ? 'EXISTS' : 'MISSING');
+            console.log('Tokens match:', darkMatterToken === regularToken);
+            
+            if (darkMatterToken && regularToken) {
+                console.log('Dark Matter Token (first 50 chars):', darkMatterToken.substring(0, 50));
+                console.log('Regular Token (first 50 chars):', regularToken.substring(0, 50));
+            }
+        }
+        
+        function clearTokens() {
+            localStorage.clear();
+            checkTokens();
+        }
+    </script>
+</body>
+</html>

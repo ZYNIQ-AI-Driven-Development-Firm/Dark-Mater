@@ -1,0 +1,26 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: darkmatter-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    networks:
+      - default
+      - darkmatter
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+networks:
+  darkmatter:
+    external: true
+
+volumes:
+  ollama_data:
+    driver: local

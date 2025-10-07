@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: darkmatter-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+      # memory-friendly defaults
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_CONTEXT_LENGTH=1024
+      - OLLAMA_KEEP_ALIVE=0
+    # GPU on regular docker-compose:
+    gpus: all
+    # Pre-pull two small, free models on startup:
+    command: >
+      /bin/sh -c "
+        ollama serve & 
+        sleep 3 &&
+        ollama pull llama3.2:3b &&
+        ollama pull phi3:mini &&
+        wait
+      "
+    networks:
+      - darkmatter
+
+  llm-service:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.llm
+    container_name: darkmatter-llm
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://user:password@postgres:5432/darkmatter
+      # Choose a default model your service will call if it needs one:
+      - DEFAULT_MODEL=llama3.2:3b
+    depends_on:
+      - ollama
+      - redis
+      - postgres
+    networks:
+      - darkmatter
+
+networks:
+  darkmatter:
+    external: true
+
+volumes:
+  ollama_data:
+    driver: local

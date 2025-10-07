@@ -1,0 +1,187 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database with pgvector (Main)
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: darkmatter-postgres
+    environment:
+      POSTGRES_DB: darkmatter_mcp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Initialize billing database
+      - ./billing/src/db/init-billing-db.sql:/docker-entrypoint-initdb.d/01-init-billing-db.sql:ro
+      - ./billing/src/db/schema.sql:/docker-entrypoint-initdb.d/02-billing-schema.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - darkmatter-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: darkmatter-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - darkmatter-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Ollama Service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: darkmatter-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - darkmatter-network
+    healthcheck:
+      test: ["CMD", "/bin/ollama", "list"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 60s
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: darkmatter-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      # Database
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/darkmatter_mcp
+      
+      # Redis
+      REDIS_URL: redis://redis:6379/0
+      
+      # CORS
+      ALLOWED_ORIGINS: http://localhost:3030,http://localhost:3000,http://localhost:5173
+      ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      
+      # Ollama
+      OLLAMA_BASE_URL: http://ollama:11434
+      
+      # Environment
+      ENV: development
+      DEBUG: true
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    networks:
+      - darkmatter-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Billing Service
+  billing:
+    build:
+      context: ./billing
+      dockerfile: Dockerfile
+    container_name: darkmatter-billing
+    env_file:
+      - ./billing/.env
+    environment:
+      # Database
+      POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/darkmatter_billing
+      
+      # CORS
+      ALLOWED_ORIGINS: http://localhost:3030,http://localhost:3000,http://localhost:5173
+      
+      # Environment
+      NODE_ENV: development
+      LOG_LEVEL: info
+      
+      # Feature flags
+      DM_FEATURE_BILLING_ENABLED: true
+      DM_BILLING_MODE: staging
+      
+      # Internal API
+      INTERNAL_API_SECRET: billing_internal_secret_123
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./billing:/app
+      - /app/node_modules
+    networks:
+      - darkmatter-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: darkmatter-frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+      VITE_WS_BASE_URL: ws://localhost:8000
+      VITE_BILLING_API_BASE_URL: http://localhost:8082
+      VITE_APP_ENV: development
+      VITE_ENABLE_WEBSOCKET: true
+      VITE_ENABLE_OTP: true
+      VITE_DM_FEATURE_BILLING: true
+    ports:
+      - "3030:80"
+    networks:
+      - darkmatter-network
+    depends_on:
+      - backend
+      - billing
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  darkmatter-network:
+    driver: bridge

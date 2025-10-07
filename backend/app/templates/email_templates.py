@@ -1,0 +1,650 @@
+"""
+Email HTML templates for Dark Matter MCP.
+"""
+
+def get_otp_email_template(otp: str, user_email: str) -> str:
+    """
+    Get the OTP email HTML template with Dark Matter MCP styling.
+    """
+    return f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Matter MCP - Authentication Code</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+        
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+        
+        body {{
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }}
+        
+        .email-container {{
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #000000;
+            border: 1px solid #63bb33;
+            border-radius: 8px;
+            overflow: hidden;
+        }}
+        
+        .header {{
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 2px solid #63bb33;
+            position: relative;
+        }}
+        
+        .header::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #63bb33, transparent);
+        }}
+        
+        .logo-container {{
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }}
+        
+        .logo-corners {{
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: #63bb33;
+        }}
+        
+        .logo-corners.top-left {{
+            top: -8px;
+            left: -8px;
+            border-top: 2px solid #63bb33;
+            border-left: 2px solid #63bb33;
+        }}
+        
+        .logo-corners.top-right {{
+            top: -8px;
+            right: -8px;
+            border-top: 2px solid #63bb33;
+            border-right: 2px solid #63bb33;
+        }}
+        
+        .logo-corners.bottom-left {{
+            bottom: -8px;
+            left: -8px;
+            border-bottom: 2px solid #63bb33;
+            border-left: 2px solid #63bb33;
+        }}
+        
+        .logo-corners.bottom-right {{
+            bottom: -8px;
+            right: -8px;
+            border-bottom: 2px solid #63bb33;
+            border-right: 2px solid #63bb33;
+        }}
+        
+        .logo-svg {{
+            width: 80px;
+            height: 80px;
+            color: #63bb33;
+            stroke-width: 1.5;
+        }}
+        
+        .brand-title {{
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }}
+        
+        .brand-subtitle {{
+            font-size: 12px;
+            color: #63bb33;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }}
+        
+        .content {{
+            padding: 40px 30px;
+            background-color: #0a0a0a;
+            border-top: 1px solid #333333;
+        }}
+        
+        .terminal-prompt {{
+            color: #63bb33;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }}
+        
+        .message {{
+            color: #cccccc;
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }}
+        
+        .otp-container {{
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #63bb33;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            box-shadow: 0 0 20px rgba(99, 187, 51, 0.3);
+        }}
+        
+        .otp-container::before {{
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(90deg, #63bb33, #4a9d26, #63bb33);
+            border-radius: 12px;
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }}
+        
+        @keyframes pulse {{
+            0%, 100% {{ opacity: 0.6; }}
+            50% {{ opacity: 1; }}
+        }}
+        
+        .otp-label {{
+            color: #63bb33;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }}
+        
+        .otp-code {{
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 8px;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(99, 187, 51, 0.5);
+        }}
+        
+        .security-info {{
+            background-color: #1a1a1a;
+            border-left: 4px solid #63bb33;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }}
+        
+        .security-title {{
+            color: #63bb33;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }}
+        
+        .security-text {{
+            color: #999999;
+            font-size: 13px;
+            line-height: 1.6;
+        }}
+        
+        .footer {{
+            background-color: #111111;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #333333;
+        }}
+        
+        .footer-text {{
+            color: #666666;
+            font-size: 11px;
+            line-height: 1.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        
+        .footer-links {{
+            margin-top: 15px;
+        }}
+        
+        .footer-link {{
+            color: #63bb33;
+            text-decoration: none;
+            font-size: 11px;
+            margin: 0 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        
+        .footer-link:hover {{
+            color: #ffffff;
+        }}
+        
+        .command-line {{
+            background-color: #000000;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+        }}
+        
+        .command-prompt {{
+            color: #63bb33;
+            font-weight: 600;
+        }}
+        
+        .command-text {{
+            color: #ffffff;
+        }}
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header with Logo -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo-corners top-left"></div>
+                <div class="logo-corners top-right"></div>
+                <div class="logo-corners bottom-left"></div>
+                <div class="logo-corners bottom-right"></div>
+                
+                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+            </div>
+            
+            <h1 class="brand-title">Dark Matter</h1>
+            <p class="brand-subtitle">MCP Client Authentication</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="terminal-prompt">&gt; auth --verify --email={user_email}</div>
+            
+            <p class="message">
+                Authentication request initiated. Use the following code to complete your secure login to the Dark Matter MCP Client.
+            </p>
+
+            <!-- OTP Code Display -->
+            <div class="otp-container">
+                <div class="otp-label">[ ACCESS_TOKEN ]</div>
+                <h2 class="otp-code">{otp}</h2>
+            </div>
+
+            <div class="command-line">
+                <span class="command-prompt">&gt; </span>
+                <span class="command-text">session --timeout=600s --single-use</span>
+            </div>
+
+            <!-- Security Information -->
+            <div class="security-info">
+                <div class="security-title">[ SECURITY_NOTICE ]</div>
+                <div class="security-text">
+                    • This code expires in 10 minutes for security<br>
+                    • Single-use authentication token<br>
+                    • If you didn't request this, ignore this message<br>
+                    • Never share this code with anyone
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">
+                © 2025 Dark Matter MCP<br>
+                Secure Model Context Protocol Client
+            </p>
+            
+            <div class="footer-links">
+                <a href="#" class="footer-link">Security</a>
+                <a href="#" class="footer-link">Support</a>
+                <a href="#" class="footer-link">Documentation</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+
+def get_welcome_email_template(username: str, user_email: str) -> str:
+    """
+    Get the welcome email HTML template with Dark Matter MCP styling.
+    """
+    return f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Dark Matter MCP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+        
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+        
+        body {{
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }}
+        
+        .email-container {{
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #000000;
+            border: 1px solid #63bb33;
+            border-radius: 8px;
+            overflow: hidden;
+        }}
+        
+        .header {{
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 2px solid #63bb33;
+            position: relative;
+        }}
+        
+        .header::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #63bb33, transparent);
+        }}
+        
+        .logo-container {{
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }}
+        
+        .logo-corners {{
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: #63bb33;
+        }}
+        
+        .logo-corners.top-left {{
+            top: -8px;
+            left: -8px;
+            border-top: 2px solid #63bb33;
+            border-left: 2px solid #63bb33;
+        }}
+        
+        .logo-corners.top-right {{
+            top: -8px;
+            right: -8px;
+            border-top: 2px solid #63bb33;
+            border-right: 2px solid #63bb33;
+        }}
+        
+        .logo-corners.bottom-left {{
+            bottom: -8px;
+            left: -8px;
+            border-bottom: 2px solid #63bb33;
+            border-left: 2px solid #63bb33;
+        }}
+        
+        .logo-corners.bottom-right {{
+            bottom: -8px;
+            right: -8px;
+            border-bottom: 2px solid #63bb33;
+            border-right: 2px solid #63bb33;
+        }}
+        
+        .logo-svg {{
+            width: 80px;
+            height: 80px;
+            color: #63bb33;
+            stroke-width: 1.5;
+        }}
+        
+        .brand-title {{
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }}
+        
+        .brand-subtitle {{
+            font-size: 12px;
+            color: #63bb33;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }}
+        
+        .content {{
+            padding: 40px 30px;
+            background-color: #0a0a0a;
+            border-top: 1px solid #333333;
+        }}
+        
+        .welcome-title {{
+            color: #63bb33;
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        
+        .username {{
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }}
+        
+        .message {{
+            color: #cccccc;
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }}
+        
+        .features-container {{
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid #63bb33;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+        }}
+        
+        .features-title {{
+            color: #63bb33;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }}
+        
+        .feature {{
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+        }}
+        
+        .feature::before {{
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: #63bb33;
+            font-weight: 600;
+        }}
+        
+        .feature-text {{
+            color: #cccccc;
+            font-size: 13px;
+        }}
+        
+        .cta-container {{
+            text-align: center;
+            margin: 40px 0;
+        }}
+        
+        .cta-button {{
+            display: inline-block;
+            background: linear-gradient(135deg, #63bb33 0%, #4a9d26 100%);
+            color: #000000;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }}
+        
+        .cta-button:hover {{
+            background: linear-gradient(135deg, #4a9d26 0%, #63bb33 100%);
+            transform: translateY(-2px);
+        }}
+        
+        .footer {{
+            background-color: #111111;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #333333;
+        }}
+        
+        .footer-text {{
+            color: #666666;
+            font-size: 11px;
+            line-height: 1.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        
+        .footer-links {{
+            margin-top: 15px;
+        }}
+        
+        .footer-link {{
+            color: #63bb33;
+            text-decoration: none;
+            font-size: 11px;
+            margin: 0 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        
+        .footer-link:hover {{
+            color: #ffffff;
+        }}
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header with Logo -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo-corners top-left"></div>
+                <div class="logo-corners top-right"></div>
+                <div class="logo-corners bottom-left"></div>
+                <div class="logo-corners bottom-right"></div>
+                
+                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+            </div>
+            
+            <h1 class="brand-title">Dark Matter</h1>
+            <p class="brand-subtitle">MCP Client Dashboard</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="welcome-title">[ CONNECTION_ESTABLISHED ]</div>
+            <div class="username">Welcome, {username}</div>
+            
+            <p class="message">
+                Your Dark Matter MCP Client account has been successfully initialized. You now have access to the most advanced Model Context Protocol interface available.
+            </p>
+
+            <!-- Features -->
+            <div class="features-container">
+                <div class="features-title">[ AVAILABLE_MODULES ]</div>
+                
+                <div class="feature">
+                    <div class="feature-text">Connect to multiple MCP servers</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-text">Persistent conversation memory</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-text">Advanced security workflows</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-text">Real-time task orchestration</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-text">WebSocket communication</div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="cta-container">
+                <a href="#" class="cta-button">[ Initiate Connection ]</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">
+                © 2025 Dark Matter MCP<br>
+                Advanced Model Context Protocol Client
+            </p>
+            
+            <div class="footer-links">
+                <a href="#" class="footer-link">Documentation</a>
+                <a href="#" class="footer-link">Support</a>
+                <a href="#" class="footer-link">GitHub</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+"""

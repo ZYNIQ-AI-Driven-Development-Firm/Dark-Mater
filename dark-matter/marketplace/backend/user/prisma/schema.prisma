@@ -1,0 +1,184 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model MarketplaceListing {
+  id           String   @id @default(uuid())
+  type         ListingType
+  title        String
+  summary      String
+  description  String?
+  priceCents   Int      @default(0)
+  billingCycle BillingCycle @default(ONE_TIME)
+  vendorId     String
+  manifestJson Json
+  status       ListingStatus @default(DRAFT)
+  featured     Boolean  @default(false)
+  downloads    Int      @default(0)
+  rating       Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  orders       MarketplaceOrderItem[]
+  licenses     MarketplaceLicense[]
+  reviews      MarketplaceReview[]
+
+  @@map("marketplace_listings")
+}
+
+model MarketplaceOrder {
+  id          String      @id @default(uuid())
+  userId      String
+  totalCents  Int
+  status      OrderStatus @default(PENDING)
+  stripePaymentIntentId String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  items       MarketplaceOrderItem[]
+  licenses    MarketplaceLicense[]
+
+  @@map("marketplace_orders")
+}
+
+model MarketplaceOrderItem {
+  id         String @id @default(uuid())
+  orderId    String
+  listingId  String
+  priceCents Int
+  quantity   Int    @default(1)
+
+  // Relations
+  order      MarketplaceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  listing    MarketplaceListing @relation(fields: [listingId], references: [id])
+
+  @@map("marketplace_order_items")
+}
+
+model MarketplaceLicense {
+  id         String        @id @default(uuid())
+  userId     String
+  orderId    String
+  listingId  String
+  scopeJson  Json
+  status     LicenseStatus @default(ACTIVE)
+  tokenJws   String        @unique
+  startAt    DateTime      @default(now())
+  endAt      DateTime?
+  usageCount Int           @default(0)
+  maxUsage   Int?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  // Relations
+  order      MarketplaceOrder @relation(fields: [orderId], references: [id])
+  listing    MarketplaceListing @relation(fields: [listingId], references: [id])
+
+  @@map("marketplace_licenses")
+}
+
+model MarketplaceVendor {
+  id              String       @id @default(uuid())
+  orgName         String
+  contactEmail    String       @unique
+  description     String?
+  website         String?
+  payoutAccountId String?
+  revenueShare    Float        @default(0.7) // 70% to vendor, 30% to platform
+  status          VendorStatus @default(PENDING)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@map("marketplace_vendors")
+}
+
+model MarketplaceReview {
+  id        String   @id @default(uuid())
+  userId    String
+  listingId String
+  rating    Int      // 1-5 stars
+  comment   String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  listing   MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+  @@map("marketplace_reviews")
+}
+
+model MarketplaceCart {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  itemsJson Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("marketplace_carts")
+}
+
+model MarketplaceAuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  resource  String
+  resourceId String?
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@map("marketplace_audit_logs")
+}
+
+enum ListingType {
+  AGENT
+  TEAM
+  TOOL
+  PLUGIN
+}
+
+enum BillingCycle {
+  ONE_TIME
+  HOURLY
+  DAILY
+  MONTHLY
+}
+
+enum ListingStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum LicenseStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+  SUSPENDED
+}
+
+enum VendorStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+  REJECTED
+}

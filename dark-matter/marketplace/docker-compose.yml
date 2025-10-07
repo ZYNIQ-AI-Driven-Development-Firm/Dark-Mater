@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  marketplace-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: marketplace
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - marketplace_db_data:/var/lib/postgresql/data
+    networks:
+      - darkmatter
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  marketplace-redis:
+    image: redis:7-alpine
+    networks:
+      - darkmatter
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  marketplace-backend-user:
+    build:
+      context: ./backend/user
+      dockerfile: Dockerfile
+    environment:
+      - AUTH_ISSUER_URL=${AUTH_ISSUER_URL}
+      - AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
+      - AUTH_CLIENT_SECRET=${AUTH_CLIENT_SECRET}
+      - POSTGRES_URL=${POSTGRES_URL}
+      - REDIS_URL=${REDIS_URL}
+      - EVENTS_URL=${EVENTS_URL}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - LICENSE_SIGNING_KEY=${LICENSE_SIGNING_KEY}
+      - DM_FEATURE_ENABLED=${DM_FEATURE_ENABLED}
+    ports:
+      - "${MARKETPLACE_USER_PORT}:8000"
+    depends_on:
+      marketplace-db:
+        condition: service_healthy
+      marketplace-redis:
+        condition: service_healthy
+    networks:
+      - darkmatter
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  marketplace-backend-admin:
+    build:
+      context: ./backend/admin
+      dockerfile: Dockerfile
+    environment:
+      - AUTH_ISSUER_URL=${AUTH_ISSUER_URL}
+      - AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
+      - AUTH_CLIENT_SECRET=${AUTH_CLIENT_SECRET}
+      - POSTGRES_URL=${POSTGRES_URL}
+      - REDIS_URL=${REDIS_URL}
+      - EVENTS_URL=${EVENTS_URL}
+      - DM_FEATURE_ENABLED=${DM_FEATURE_ENABLED}
+    ports:
+      - "${MARKETPLACE_ADMIN_PORT}:8000"
+    depends_on:
+      marketplace-db:
+        condition: service_healthy
+      marketplace-redis:
+        condition: service_healthy
+    networks:
+      - darkmatter
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  marketplace-frontend-user:
+    build:
+      context: ./frontend/user
+      dockerfile: Dockerfile
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:${MARKETPLACE_USER_PORT}
+      - NEXT_PUBLIC_AUTH_URL=${AUTH_ISSUER_URL}
+      - NEXT_PUBLIC_FEATURE_ENABLED=${DM_FEATURE_ENABLED}
+    ports:
+      - "3010:3000"
+    depends_on:
+      - marketplace-backend-user
+    networks:
+      - darkmatter
+
+  marketplace-frontend-admin:
+    build:
+      context: ./frontend/admin
+      dockerfile: Dockerfile
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:${MARKETPLACE_ADMIN_PORT}
+      - NEXT_PUBLIC_AUTH_URL=${AUTH_ISSUER_URL}
+      - NEXT_PUBLIC_FEATURE_ENABLED=${DM_FEATURE_ENABLED}
+    ports:
+      - "3011:3000"
+    depends_on:
+      - marketplace-backend-admin
+    networks:
+      - darkmatter
+
+volumes:
+  marketplace_db_data:
+
+networks:
+  darkmatter:
+    external: true

@@ -3,9 +3,10 @@ import React, { useState, useRef, ChangeEvent, KeyboardEvent, ClipboardEvent } f
 interface OtpInputProps {
   length: number;
   onChange: (otp: string) => void;
+  disabled?: boolean;
 }
 
-const OtpInput: React.FC<OtpInputProps> = ({ length, onChange }) => {
+const OtpInput: React.FC<OtpInputProps> = ({ length, onChange, disabled = false }) => {
   const [otp, setOtp] = useState<string[]>(new Array(length).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 

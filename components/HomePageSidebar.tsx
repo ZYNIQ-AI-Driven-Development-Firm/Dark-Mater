@@ -1,9 +1,14 @@
 import React from 'react';
+import OllamaStatusIndicator from './OllamaStatusIndicator';
 
 const HomePageSidebar = () => {
   return (
     <div className="h-full bg-black p-2 border-r border-gray-800">
       <ul className="flex h-full flex-col items-center justify-center gap-2">
+        {/* Ollama Status */}
+        <li className="w-full px-2 py-1">
+          <OllamaStatusIndicator />
+        </li>
         {/* Notifications Item */}
         <li className="group w-12 overflow-hidden rounded-lg border-l-2 border-transparent bg-gray-900 shadow-md shadow-black/20 transition-all duration-300 hover:w-56 hover:border-[#63bb33] hover:shadow-lg hover:shadow-[#63bb33]/20 has-[:focus]:w-56 has-[:focus]:border-[#63bb33] has-[:focus]:shadow-lg has-[:focus]:shadow-[#63bb33]/20">
           <button className="peer flex w-full cursor-pointer items-center gap-2 p-2 text-left text-gray-300 transition-all active:scale-95">

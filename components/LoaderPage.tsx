@@ -57,7 +57,7 @@ const LoaderPage = () => {
         </div>
       </div>
       <div className="loading-text">
-        DARK MATER | Loading... {progress}%
+        DARK MATTER | Loading... {progress}%
       </div>
     </StyledWrapper>
   );
@@ -97,8 +97,8 @@ const StyledWrapper = styled.div`
 
   .gearbox {
     background: #111;
-    height: 150px;
-    width: 200px;
+    height: 172.5px;
+    width: 230px;
     position: relative;
     border: none;
     overflow: hidden;
@@ -121,42 +121,42 @@ const StyledWrapper = styled.div`
 
   .gear {
     position: absolute;
-    height: 60px;
-    width: 60px;
+    height: 69px;
+    width: 69px;
     box-shadow: 0px -1px 0px 0px #888888, 0px 1px 0px 0px black;
-    border-radius: 30px;
+    border-radius: 34.5px;
   }
 
   .gear.large {
-    height: 120px;
-    width: 120px;
-    border-radius: 60px;
+    height: 138px;
+    width: 138px;
+    border-radius: 69px;
   }
 
   .gear.large:after {
-    height: 96px;
-    width: 96px;
-    border-radius: 48px;
-    margin-left: -48px;
-    margin-top: -48px;
+    height: 110.4px;
+    width: 110.4px;
+    border-radius: 55.2px;
+    margin-left: -55.2px;
+    margin-top: -55.2px;
   }
 
-  .gear.one { top: 12px; left: 10px; }
-  .gear.two { top: 61px; left: 60px; }
-  .gear.three { top: 110px; left: 10px; }
-  .gear.four { top: 13px; left: 128px; }
+  .gear.one { top: 13.8px; left: 11.5px; }
+  .gear.two { top: 70.2px; left: 69px; }
+  .gear.three { top: 126.5px; left: 11.5px; }
+  .gear.four { top: 14.9px; left: 147.2px; }
 
   .gear:after {
     content: "";
     position: absolute;
-    height: 36px;
-    width: 36px;
-    border-radius: 36px;
+    height: 41.4px;
+    width: 41.4px;
+    border-radius: 41.4px;
     background: #111;
     top: 50%;
     left: 50%;
-    margin-left: -18px;
-    margin-top: -18px;
+    margin-left: -20.7px;
+    margin-top: -20.7px;
     z-index: 3;
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1), inset 0px 0px 10px rgba(0, 0, 0, 0.1), inset 0px 2px 0px 0px #090909, inset 0px -1px 0px 0px #888888;
   }
@@ -166,12 +166,12 @@ const StyledWrapper = styled.div`
     height: 100%;
     width: 100%;
     background: #555;
-    border-radius: 30px;
+    border-radius: 34.5px;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .large .gear-inner {
-    border-radius: 60px;
+    border-radius: 69px;
   }
 
   .gear.one .gear-inner { animation: counter-clockwise 3s infinite linear; }
@@ -181,21 +181,21 @@ const StyledWrapper = styled.div`
 
   .gear-inner .bar {
     background: #555;
-    height: 16px;
-    width: 76px;
+    height: 18.4px;
+    width: 87.4px;
     position: absolute;
     left: 50%;
-    margin-left: -38px;
+    margin-left: -43.7px;
     top: 50%;
-    margin-top: -8px;
+    margin-top: -9.2px;
     border-radius: 2px;
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .large .gear-inner .bar {
-    margin-left: -68px;
-    width: 136px;
+    margin-left: -78.2px;
+    width: 156.4px;
   }
 
   .gear-inner .bar:nth-child(2) { transform: rotate(60deg); }
