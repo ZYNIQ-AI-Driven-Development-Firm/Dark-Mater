@@ -63,6 +63,24 @@ const CompanyChatWidget: React.FC<CompanyChatWidgetProps> = ({
     try {
       setError(null); // Clear any previous errors
       
+      // Convert email to a consistent UUID format for backend
+      // Generate a deterministic UUID based on the user email
+      const generateUserUUID = (email: string): string => {
+        // Simple hash-based UUID generation (you could use crypto.subtle.digest for better hashing)
+        let hash = 0;
+        for (let i = 0; i < email.length; i++) {
+          const char = email.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32-bit integer
+        }
+        
+        // Convert to a UUID-like format
+        const hex = Math.abs(hash).toString(16).padStart(8, '0');
+        return `${hex.slice(0, 8)}-${hex.slice(0, 4)}-4${hex.slice(1, 4)}-8${hex.slice(1, 4)}-${hex}${hex.slice(0, 4)}`;
+      };
+      
+      const userUUID = generateUserUUID(userId);
+      
       const response = await fetch('/api/v1/company-chat/threads', {
         method: 'POST',
         headers: {
@@ -70,7 +88,8 @@ const CompanyChatWidget: React.FC<CompanyChatWidgetProps> = ({
           'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({
-          title: 'Company Chat Session'
+          title: 'Company Chat Session',
+          user_id: userUUID  // Send UUID instead of email
         })
       });
 

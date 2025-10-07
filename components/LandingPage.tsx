@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BackgroundGrid from './BackgroundGrid';
 import Footer from './Footer';
-import PricingSection from './PricingSection';
 
 const bootCommand = "boot --verbose";
 
@@ -169,9 +168,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
             </div>
           </div>
         </section>
-
-        {/* Pricing Section - Last section before footer */}
-        <PricingSection />
 
         {/* Footer Section */}
         <div className="relative z-10">
