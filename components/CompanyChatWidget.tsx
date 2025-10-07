@@ -81,7 +81,7 @@ const CompanyChatWidget: React.FC<CompanyChatWidgetProps> = ({
       
       const userUUID = generateUserUUID(userId);
       
-      const response = await fetch('/api/v1/company-chat/threads', {
+      const response = await fetch('http://localhost:8000/api/v1/company-chat/threads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ const CompanyChatWidget: React.FC<CompanyChatWidgetProps> = ({
 
   const loadMessages = async (threadId: string) => {
     try {
-      const response = await fetch(`/api/v1/company-chat/threads/${threadId}/messages`, {
+      const response = await fetch(`http://localhost:8000/api/v1/company-chat/threads/${threadId}/messages`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }
@@ -162,7 +162,7 @@ const CompanyChatWidget: React.FC<CompanyChatWidgetProps> = ({
     abortControllerRef.current = new AbortController();
 
     try {
-      const response = await fetch(`/api/v1/company-chat/threads/${threadId}/messages`, {
+      const response = await fetch(`http://localhost:8000/api/v1/company-chat/threads/${threadId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

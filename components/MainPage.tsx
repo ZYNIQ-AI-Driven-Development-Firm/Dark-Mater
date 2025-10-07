@@ -270,6 +270,20 @@ const MainPage: React.FC<MainPageProps> = ({ onLogout }) => {
                 </span>
               )}
             </div>
+            <div className="flex items-center space-x-2">
+              <div className={`w-2 h-2 rounded-full ${
+                connectedServers.length > 0 
+                  ? 'bg-green-500 animate-pulse' 
+                  : 'bg-gray-500'
+              }`}></div>
+              <span className={`text-sm ${
+                connectedServers.length > 0 
+                  ? 'text-[#63bb33]' 
+                  : 'text-gray-400'
+              }`}>
+                Servers: {connectedServers.length} connected
+              </span>
+            </div>
           </div>
           
           {/* Username */}
@@ -313,21 +327,10 @@ const MainPage: React.FC<MainPageProps> = ({ onLogout }) => {
           </div>
         )}
 
-        {/* Server Count Display */}
-        {!loading && !error && (
-          <div className="mt-4 text-gray-400 text-sm">
-            {connectedServers.length} server{connectedServers.length !== 1 ? 's' : ''} connected
-          </div>
-        )}
 
-        {/* Tchiko AI Assistant */}
+
+        {/* Lydie AI Assistant */}
         <div className="mt-8 flex flex-col items-center">
-          <div className="text-gray-500 text-sm mb-3 flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            {'>_'} Ask Tchiko will help you
-          </div>
           
           <button
             onClick={() => setIsCompanyChatOpen(true)}
@@ -342,7 +345,7 @@ const MainPage: React.FC<MainPageProps> = ({ onLogout }) => {
             </div>
             
             <div className="flex flex-col items-start">
-              <span className="text-sm font-bold">{'>_'} Ask Tchiko will help you</span>
+              <span className="text-sm font-bold">{'>_'} Ask Lydie our AI Assistant</span>
               <span className="text-xs text-gray-400">Company Knowledge Assistant</span>
             </div>
             
@@ -519,7 +522,7 @@ const MainPage: React.FC<MainPageProps> = ({ onLogout }) => {
           isOpen={isCompanyChatOpen}
           onClose={() => setIsCompanyChatOpen(false)}
           userId={currentUser}
-          authToken={localStorage.getItem('access_token') || ''}
+          authToken={localStorage.getItem('dark_matter_access_token') || ''}
         />
       )}
       
